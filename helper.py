@@ -2,11 +2,11 @@ import cv2
 import numpy as np
 from scipy import signal
 
-#returns array where white pixels are places in im where sums of sparse areass < num
+#returns array where white pixels are places in im where sums of sparse areas < num
 def findMask(im, winSize, num):
     #convert image to 1's and 0's
     im = im.astype(bool).astype(int)
-    res = np.zeros((im.shape))
+    res = np.zeros((im.shape), dtype=np.uint8)
 
     for i in range(im.shape[0]):
         for j in range(im.shape[1]):
@@ -39,7 +39,7 @@ def findCornerPoints(im):
     return corners
     
     
-    
+#finds most bottom right non zero pixel (which should be corner)
 def getBR(sums, halfR, halfC):
     maxRow, maxCol = 0, 0
     for r in range(halfR, sums.shape[0]):
@@ -48,6 +48,7 @@ def getBR(sums, halfR, halfC):
                     maxRow, maxCol = r, c
     return np.array([maxRow, maxCol])
 
+#finds most top left non zero pixel (which should be corner)
 def getTL(sums, halfR, halfC):
     minRow, minCol = sums.shape[0], sums.shape[1]
     for r in range(halfR):
@@ -56,6 +57,7 @@ def getTL(sums, halfR, halfC):
                     minRow, minCol = r, c
     return np.array([minRow, minCol])
 
+#finds most top right non zero pixel (which should be corner)
 def getTR(sums, halfR, halfC):
     minRow, maxCol = sums.shape[0], 0
     for r in range(halfR):
@@ -64,6 +66,7 @@ def getTR(sums, halfR, halfC):
                     minRow, maxCol = r, c
     return np.array([minRow, maxCol])
 
+#finds most bottom left non zero pixel (which should be corner)
 def getBL(sums, halfR, halfC):
     maxRow, minCol = 0, sums.shape[1]
     for r in range(halfR, sums.shape[0]):
@@ -72,13 +75,13 @@ def getBL(sums, halfR, halfC):
                     maxRow, minCol = r, c
     return np.array([maxRow, minCol])
 
-#draws given points on image
+#draws given points (Nx2 matrix) on given image
 def drawPoints(im, points):
     for i in range(points.shape[0]):
         im = cv2.circle(im, tuple(points[i][::-1]), 5, color=(255, 255, 255))
     return im
 
-#fills surrounded holes in binary image 
+#fills completely surrounded holes in binary image 
 def fillMaskHoles(im):
     mask = np.copy(im)
     maxVal = 255

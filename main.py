@@ -17,51 +17,48 @@ im1, im2, im3 = cv2.resize(im1, dsize=(0,0), fx=.2, fy=0.2), cv2.resize(im2, dsi
 # r2 = cv2.cvtColor(np.asarray(im1), cv2.COLOR_RGB2BGR)
 # r2 = cv2.resize(r2, dsize=(0,0), fx=.2, fy=0.2)
 
-#create stitch class and stich images together
+#Stitch images together
 stitcher = cv2.Stitcher_create()
-im1 = stitcher.stitch((im3, im2, im1))
+_, stitched = stitcher.stitch((im3, im2, im1))
 
 #FILTERING 
-st1 = cv2.convertScaleAbs(im1[1], alpha=2.5, beta=0)
-st1 = cv2.cvtColor(st1, cv2.COLOR_BGR2GRAY)
-gray = np.copy(st1)
+im = cv2.convertScaleAbs(stitched, alpha=2.5, beta=0)
+im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+gray = np.copy(im)
 
 """  Homography testing / need to refine
-# mag = gradientMag(st1)
+# mag = gradientMag(im)
 # corners = findCornerPoints(mag)
-# dstCoords = np.array([[0, 0], [0, st1.shape[1]], [st1.shape[0], 0], [st1.shape[0], st1.shape[1]]])
-# # st2 = drawPoints(st1, corners)
+# dstCoords = np.array([[0, 0], [0, im.shape[1]], [im.shape[0], 0], [im.shape[0], im.shape[1]]])
+# # st2 = drawPoints(im, corners)
 # # dstCoords = np.array([ [0, 0], [0, 500], [500, 0], [500, 500]])
 # H, mask = cv2.findHomography(corners, dstCoords,method=cv2.RANSAC, ransacReprojThreshold=5)
-# st2 = cv2.warpPerspective(st1, H, dsize=(st1.shape[1], st1.shape[0]))
+# st2 = cv2.warpPerspective(im, H, dsize=(im.shape[1], im.shape[0]))
 """
 
-
-hp3 = np.array([[0, -1, 0], [-1, 4, -1], [0, -1, 0]]) #works beetter
+hp3 = np.array([[0, -1, 0], [-1, 4, -1], [0, -1, 0]]) #works better
 h3 = np.array([[-1, -1, -1], [-1,  8, -1], [-1, -1, -1]])
 
-st1 = cv2.GaussianBlur(st1, ksize=(3,3), sigmaX=1)
-st1 = cv2.filter2D(st1, -1, hp3)
-st1 = cv2.threshold(st1, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+im = cv2.GaussianBlur(im, ksize=(3,3), sigmaX=1)
+im = cv2.filter2D(im, -1, hp3)
+im = cv2.threshold(im, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
-se1 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
-st1 = cv2.morphologyEx(st1, cv2.MORPH_CLOSE, se1)
-st1 = cv2.erode(st1, kernel=se1)
-st1 = np.uint8(findMask(st1, winSize=25, num=4))
+structElem = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
+im = cv2.erode(im, kernel=structElem) 
+im = findMask(im, winX=im.shape[1]//25, winY=im.shape[0]//25, num=5)
 
-contours, hierarchy = cv2.findContours(st1, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-st1 = cv2.drawContours(st1, contours, -1, (255,255,255), thickness=cv2.FILLED)
-thresh = cv2.threshold(st1, 127, 255, cv2.THRESH_BINARY)[1]
 
-thresh = fillMaskHoles(thresh)
-#close to get rid of jagged edges
-thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11,11)))
+im = cv2.morphologyEx(im, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (im.shape[0]//30, im.shape[1]//30)))
+im = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY)[1]
+im = fillMaskHoles(im)
+# im = cv2.erode(im, kernel=structElem) #be conservative maybe
+
 
             
 
-st1 = np.uint8(st1)
-cv2.imshow('1', st1); 
-cv2.imshow('a', thresh); 
+im = np.uint8(im)
+cv2.imshow('1', im); 
+cv2.imshow('gray', gray); 
 cv2.waitKey(0)
 
 

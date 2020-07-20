@@ -1,18 +1,19 @@
 import cv2
 import numpy as np
 from scipy import signal
-
+from matplotlib import pyplot as plt
+from constants import imStrings
+#DO WEIGHTING FN WHERE IF OTHER PIXELS NEARBY ARE WHITE THEN MORE CHANCE?? this shit hella hard
 #returns array where white pixels are places in im where sums of sparse areas < num
-def findMask(im, winSize, num):
+def findMask(im, winR, winC, num):
     #convert image to 1's and 0's
     im = im.astype(bool).astype(int)
     res = np.zeros((im.shape), dtype=np.uint8)
-
-    for i in range(im.shape[0]):
-        for j in range(im.shape[1]):
-            if not (i-winSize < 0 or i+winSize >= im.shape[0] or j-winSize < 0 or j+winSize >= im.shape[1]):
-                if (np.sum(im[i-winSize:i+winSize, j-winSize:j+winSize]) < num):
-                    res[i, j] = 255
+    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, ksize=(winR, winC))
+    kernel = np.ones((winR, winC))
+    np.put(kernel, kernel.size // 2, v=0)
+    x = signal.convolve2d(im, kernel, mode='same', fillvalue=255)
+    res[x < num] = 255
     return res
 
 #calculates gradient magnitude of image
@@ -21,7 +22,7 @@ def gradientMag(im):
     mag = np.sqrt(imX**2 + imY**2)
     return mag
 
-#FIND NEAREST BLACK COORD NEXT TO WHITE COORD
+#finds respective corner points which are black pixels that are next to at least 1 white pixel
 def findCornerPoints(im):
     #kernel with all values = 1 except middle value which is 0
     kernel = np.ones((3, 3))
@@ -29,8 +30,7 @@ def findCornerPoints(im):
     
     sums = signal.convolve2d(im, kernel, mode='same')
     sums = sums.astype(bool)
-    
-    #finds respective corner points which are black pixels that are next to at least 1 white pixel
+    #finds 4 corner points
     halfR, halfC = sums.shape[0]//2, sums.shape[1]//2
     tl, tr, bl, br = getTL(sums, halfR, halfC), getTR(sums, halfR, halfC), getBL(sums, halfR, halfC), getBR(sums, halfR, halfC)
     tl, tr, bl, br = np.reshape(tl, (1, -1)),  np.reshape(tr, (1, -1)),  np.reshape(bl, (1, -1)),  np.reshape(br, (1, -1)) 
@@ -96,3 +96,25 @@ def fillMaskHoles(im):
     return im
     
 
+def findKSize(im):
+    assert(len(im.shape) == 2)
+    kX, kY = im.shape[0] // 100, im.shape[1] // 100
+    if (not kX % 2): kX += 1 
+    if (not kY % 2): kY += 1
+    return (kX, kY) 
+
+def convertBRG2RGB(imList):
+    index = 0
+    for i in imList:
+        imList[index] = cv2.cvtColor(i, code=cv2.COLOR_BGR2RGB)
+        index += 1
+    return imList
+
+def plotImages(imList, figX, figY):
+    plt.figure(figsize=(figX,figY))
+    plt.suptitle('Image processing pipeline')
+    for i in range(len(imList)):
+        plt.subplot(2,5,i+1).set_title(imStrings[i])
+        plt.imshow(imList[i])
+
+    plt.show()  

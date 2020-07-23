@@ -3,7 +3,8 @@ import numpy as np
 from scipy import signal
 from matplotlib import pyplot as plt
 from constants import imStrings
-#DO WEIGHTING FN WHERE IF OTHER PIXELS NEARBY ARE WHITE THEN MORE CHANCE?? this shit hella hard
+
+
 #returns array where white pixels are places in im where sums of sparse areas < num
 def findMask(im, winR, winC, num):
     #convert image to 1's and 0's

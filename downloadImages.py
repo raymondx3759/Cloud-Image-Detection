@@ -2,12 +2,13 @@ from selenium import webdriver
 import time
 import shutil
 
-#
+#Downloads satellite image (NEF) from NASA website with given string parameters
 def downloadImage(ISSNum, frameNum):
+    assert(isinstance(ISSNum, str) and isinstance(frameNum, str))
+    #Uses Safari to download image; can change to other browsers
     driver = webdriver.Safari()
     url = "https://eol.jsc.nasa.gov/SearchPhotos/RequestOriginalImage.pl?mission=ISS" + ISSNum + "&roll=E&frame="
     url += frameNum + "&file=iss" + ISSNum + "e" + frameNum + ".NEF"
-    # print (url)
     driver.get(url)
     #Server requests may take up to 6 minutes so sleep to guarantee download
     time.sleep(360)
@@ -18,8 +19,10 @@ def downloadImage(ISSNum, frameNum):
     driver.quit()
     return (ISSNum, frameNum)
 
-ISSNum, frameNum = downloadImage("035", "017200")
+ISSNum, frameNum = None, None
+ISSNum, frameNum = downloadImage(ISSNum, frameNum)
 image = "iss" + ISSNum + "e" + frameNum + ".NEF" 
+#Moves image from Downloads to specified directory for ease of access
 newDir = shutil.move(image, "../Desktop/Year2(19-20)/Summer 20/Cloud-Image-Detection/Images")
 print ("The image " + image + "was moved to " + newDir)
 

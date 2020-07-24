@@ -31,10 +31,33 @@ def stitchImages(imList):
 #Finds odd and positive kernel size based on image width and height
 def findKSize(im):
     assert(len(im.shape) == 2)
-    kX, kY = im.shape[0] // 100, im.shape[1] // 100
-    if (not kX % 2): kX += 1 
-    if (not kY % 2): kY += 1
-    return (kX, kY) 
+    lower, upper = 30, 70
+    scale = np.asarray([i for i in range(lower, upper)])
+    mean = np.mean(im)
+    closest = scale[np.abs(scale - mean).argmin()]
+    print (int(mean), closest)
+    kR, kC = findK(im)
+    print ("findK", kR, kC)
+    if closest < 40:
+        return kR - 2, kC - 2
+    elif closest < 50:
+        # return (5, 5)
+        return kR, kC
+    elif closest < 55: 
+        return 1, 2
+    elif closest < 60:
+        return kR, kC
+    elif closest < 65:
+        return kR+2, kC+2
+
+def findK(im):
+    assert(len(im.shape) == 2)
+    kR, kC = im.shape[0] // 100, im.shape[1] // 100
+    if (not kR % 2): kR += 1 
+    if (not kC % 2): kC += 1
+    return (kR, kC)
+    
+
 
 #Since openCV stores images as BGR, images may need to be converted to be shown correctly
 #Converts given list of images from BGR to RGB 

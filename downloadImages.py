@@ -2,7 +2,8 @@ from selenium import webdriver
 import time
 import shutil
 
-#Downloads satellite image (NEF) from NASA website with given string parameters
+#Downloads satellite image (NEF) from Cities at Night interactive website with given string parameters
+#Every image can be found at "https://pmisson.carto.com/viz/281a7eb6-fa7a-11e4-8522-0e853d047bba/public_map"
 def downloadImage(ISSNum, frameNum):
     assert(isinstance(ISSNum, str) and isinstance(frameNum, str))
     #Uses Safari to download image; can change to other browsers

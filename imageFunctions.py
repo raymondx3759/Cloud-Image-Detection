@@ -31,25 +31,23 @@ def stitchImages(imList):
 #Finds odd and positive kernel size based on image width and height
 def findKSize(im):
     assert(len(im.shape) == 2)
-    lower, upper = 30, 70
-    scale = np.asarray([i for i in range(lower, upper)])
+    lower, upper, step = 30, 80, 5
+    scale = np.asarray([i for i in range(lower, upper, step)])
     mean = np.mean(im)
     closest = scale[np.abs(scale - mean).argmin()]
     print (int(mean), closest)
     kR, kC = findK(im)
     print ("findK", kR, kC)
-    if closest < 40:
-        return kR - 2, kC - 2
+    if closest < 40: return kR - 2, kC - 2
     elif closest < 50:
         # return (5, 5)
         return kR, kC
-    elif closest < 55: 
-        return 1, 2
-    elif closest < 60:
-        return kR, kC
-    elif closest < 65:
-        return kR+2, kC+2
-
+    elif closest < 55: return 1, 2
+    elif closest < 60: return kR, kC
+    elif closest < 65: return kR+2, kC+2
+    elif closest < 70: return kR, kC
+    else: return kR + 4, kC + 4
+ 
 def findK(im):
     assert(len(im.shape) == 2)
     kR, kC = im.shape[0] // 100, im.shape[1] // 100

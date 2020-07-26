@@ -19,6 +19,7 @@ def convertRawImages(paths, resizeX=1, resizeY=1):
 
 #Stitchs images from imList together and returns the composite image
 def stitchImages(imList):
+    #only 1 image passed; just return it 
     if (len(imList) == 1):
         return imList[0]
     stitcher = cv2.Stitcher_create(mode=cv2.STITCHER_SCANS)
@@ -28,9 +29,10 @@ def stitchImages(imList):
         exit(1)
     return stitched
 
-#Finds odd and positive kernel size based on image width and height
+#Finds odd & positive kernel size for filtering based on image brightness and dimensions
 def findKSize(im):
     assert(len(im.shape) == 2)
+    #play around w range values??
     lower, upper, step = 30, 80, 5
     scale = np.asarray([i for i in range(lower, upper, step)])
     mean = np.mean(im)
@@ -42,15 +44,16 @@ def findKSize(im):
     elif closest < 50:
         # return (5, 5)
         return kR, kC
-    elif closest < 55: return 1, 2
+    elif closest < 55: return kR, kC
     elif closest < 60: return kR, kC
     elif closest < 65: return kR+2, kC+2
     elif closest < 70: return kR, kC
     else: return kR + 4, kC + 4
  
+ #finds kernel size based on image dimensions
 def findK(im):
     assert(len(im.shape) == 2)
-    kR, kC = im.shape[0] // 100, im.shape[1] // 100
+    kR, kC = im.shape[0] // segments, im.shape[1] // segments
     if (not kR % 2): kR += 1 
     if (not kC % 2): kC += 1
     return (kR, kC)

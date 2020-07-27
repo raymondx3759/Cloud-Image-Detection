@@ -49,16 +49,18 @@ def findKSize(im):
     elif closest < 65: return kR+2, kC+2
     elif closest < 70: return kR, kC
     else: return kR + 4, kC + 4
+
+#Finds nearest odd integer given float. Rounds up with ties
+def roundOdd(n):
+    return int(2*np.floor(n/2) + 1)
  
  #finds kernel size based on image dimensions
 def findK(im):
     assert(len(im.shape) == 2)
-    kR, kC = im.shape[0] // segments, im.shape[1] // segments
-    if (not kR % 2): kR += 1 
-    if (not kC % 2): kC += 1
+    kR, kC = im.shape[0]/segments, im.shape[1]/segments
+    kR, kC = roundOdd(kR), roundOdd(kC)
     return (kR, kC)
     
-
 
 #Since openCV stores images as BGR, images may need to be converted to be shown correctly
 #Converts given list of images from BGR to RGB 

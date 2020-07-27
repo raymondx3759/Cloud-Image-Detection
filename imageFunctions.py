@@ -35,31 +35,29 @@ def findKSize(im):
     #play around w range values??
     lower, upper, step = 30, 80, 5
     scale = np.asarray([i for i in range(lower, upper, step)])
-    mean = np.mean(im)
-    closest = scale[np.abs(scale - mean).argmin()]
-    print (int(mean), closest)
-    kR, kC = findK(im)
-    print ("findK", kR, kC)
-    if closest < 40: return kR - 2, kC - 2
-    elif closest < 50:
-        # return (5, 5)
-        return kR, kC
-    elif closest < 55: return kR, kC
-    elif closest < 60: return kR, kC
-    elif closest < 65: return kR+2, kC+2
-    elif closest < 70: return kR, kC
-    else: return kR + 4, kC + 4
+    brightness = np.mean(im)
+    closest = scale[np.abs(scale - brightness).argmin()]
+    print (int(brightness), closest)
+    kR, kC = im.shape[0]/segments, im.shape[1]/segments
+    print (kR, kC)
+    kR += getSigmoid(brightness)
+    kC += getSigmoid(brightness)
+    kR, kC = roundPosOdd(kR), roundPosOdd(kC)
+    return kR, kC
 
-#Finds nearest odd integer given float. Rounds up with ties
-def roundOdd(n):
+        
+def getSigmoid(x):
+    L, k, h, y = 20, 0.03, 90, -5
+    val = (L / (1 + np.exp(-k * (x - h)))) + y
+    print ("val=", val)
+    return val
+
+#Finds nearest odd integer > 1 given float. Rounds up with ties
+def roundPosOdd(n):
+    if (n < 3): return 3
+    if (not (n % 2)): return int(n - 1)
     return int(2*np.floor(n/2) + 1)
  
- #finds kernel size based on image dimensions
-def findK(im):
-    assert(len(im.shape) == 2)
-    kR, kC = im.shape[0]/segments, im.shape[1]/segments
-    kR, kC = roundOdd(kR), roundOdd(kC)
-    return (kR, kC)
     
 
 #Since openCV stores images as BGR, images may need to be converted to be shown correctly

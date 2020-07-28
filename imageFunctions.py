@@ -32,33 +32,46 @@ def stitchImages(imList):
 #Finds odd & positive kernel size for filtering based on image brightness and dimensions
 def findKSize(im):
     assert(len(im.shape) == 2)
-    #play around w range values??
-    lower, upper, step = 30, 80, 5
-    scale = np.asarray([i for i in range(lower, upper, step)])
     brightness = np.mean(im)
-    closest = scale[np.abs(scale - brightness).argmin()]
-    print (int(brightness), closest)
+    print ("brightness=", brightness)
     kR, kC = im.shape[0]/segments, im.shape[1]/segments
-    print (kR, kC)
-    kR += getSigmoid(brightness)
-    kC += getSigmoid(brightness)
-    kR, kC = roundPosOdd(kR), roundPosOdd(kC)
+    sig = getSigmoid(brightness)
+    kR, kC = roundPosOdd(kR+sig), roundPosOdd(kC+sig)
     return kR, kC
 
         
+#Sigmoid function with parameters as listed below. Given an x value, calculates output from curve
+#Parameters chosen such that function endpoints are (0, -5) and (200, 15)
 def getSigmoid(x):
-    L, k, h, y = 20, 0.03, 90, -5
+    L, k, h, y = 20, 0.045, 80, -5
     val = (L / (1 + np.exp(-k * (x - h)))) + y
     print ("val=", val)
     return val
 
-#Finds nearest odd integer > 1 given float. Rounds up with ties
+#Finds nearest odd integer > 1 given float. Rounds down with ties
 def roundPosOdd(n):
     if (n < 3): return 3
     if (not (n % 2)): return int(n - 1)
     return int(2*np.floor(n/2) + 1)
- 
     
+#Finds number from 0 to maxNum based on given image brightness using exponential fitting with the modifiable parameters A, b, k
+#The parameter A controls the width of the curve with higher values of A resulting in smaller widths
+#The parameter b controls the steepness of the curve with higher values of b resulting in steeper dropoffs
+#The parameter k controls the y-intercept of the curve. With the current parameters, k is set so that it is maxNum + 1
+def findNum(im, A=-1, b=0.012, k=maxNum+1):
+    assert(len(im.shape) == 2)
+    brightness = np.mean(im)
+    num = int(np.rint((A * np.exp(b * brightness)) + k))
+    return num    
+
+
+
+
+
+
+
+
+
 
 #Since openCV stores images as BGR, images may need to be converted to be shown correctly
 #Converts given list of images from BGR to RGB 

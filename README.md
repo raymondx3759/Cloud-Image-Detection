@@ -4,28 +4,25 @@ This project aims to automate the identification of cloudy areas at night from s
 ### Image Processing Algorithm
 
 1. As these are satellite images, they come in raw formats (NEF) and thus must first be converted to BGR format. 
-![Alt text](Show/im1.jpg?raw=true "Title") 
-![Alt text](Show/im2.jpg?raw=true "Title")
-![Alt text](Show/im3.jpg?raw=true "Title")
 
+![Alt text](Show/im1.jpg?raw=true "Title") 
 
 2. Similar images of the same general terrain (such as the 3 images above) can be stitched into one composite image.
 
-![Alt text](Show/im1.jpg?raw=true "Title") 
+
 
 3. The composite image has it's contrast increased to highlight artificial lighting and is then converted to a grayscale image. As can be seen in the grayscale image, the clouds seem to primarily be in the bottom right and left corners.
 
-![Alt text](Show/contrast.jpg?raw=true "Title") 
-![Alt text](Show/gray.jpg?raw=true "Title") 
+
 
 4. The grayscale image is then blurred with a Gaussian filter to reduce noise and remove isolated lighting.
 
-![Alt text](Show/gblur.jpg?raw=true "Title") 
+
 
 5. A high pass filter combined with thresholding is then used to identify heavily lighted areas (such as a city). 
 
-![Alt text](Show/highP.jpg?raw=true "Title") 
-![Alt text](Show/thresh.jpg?raw=true "Title") 
+
+
 
 An initial cloud mask is then formed based on parameters such as image brightness and dimensions. The resulting mask is then opened to remove small isolated chunks. It is thresholded to refine the mask and then closed to smooth it out. Lastly, an alorigthm is run to fill holes within the mask. 
 

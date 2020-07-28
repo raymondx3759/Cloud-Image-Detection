@@ -8,6 +8,8 @@ As these are satellite images, they come in raw formats (NEF) and thus must firs
 The composite image has it's contrast increased to highlight artificial lighting and is then converted to a grayscale image. It is blurred with a Gaussian filter to reduce noise and remove isolated lighting. A high pass filter combined with thresholding is then used to identify heavily lighted areas (such as a city). An initial cloud mask is then formed based on parameters such as image brightness and dimensions. The resulting mask is then opened to remove small isolated chunks. It is thresholded to refine the mask and then closed to smooth it out. Lastly, an alorigthm is run to fill holes within the mask. 
 
 
+![Alt text](Show/im1.jpg?raw=true "Title")
+
 
 ### Future Improvements
 1. Extracting raw data from the Cities at Night dataset is currently time consuming and slow. Improvements can be made to speed up this process so large datasets can easily be formed.

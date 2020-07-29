@@ -44,6 +44,10 @@ This project aims to automate the identification of cloudy areas at night from s
 
 ![Alt text](Show/final.jpg?raw=true "Title") 
 
+All intermediate images are plotted in a figure which can be saved. Below are two examples of different satellite images and their respective masks
+
+![Alt text](Show/out.jpg?raw=true "Title") 
+![Alt text](Show/out2.jpg?raw=true "Title") 
 
 ### Directory
 - main.py: Script that takes in image paths, runs processing algorithm on them, and plots steps in figure. Can also save figure as PDF.
@@ -57,5 +61,5 @@ This project aims to automate the identification of cloudy areas at night from s
 
 ### Future Improvements
 1. Extracting raw data from the Cities at Night dataset is currently time consuming and slow. Improvements can be made to speed up this process so large datasets can easily be formed.
-2. Use machine learning techniques to improve algorithm performance. ML was not used due to time constraints and relatively small datasets.
+2. Use machine learning techniques to improve algorithm performance and robustness. ML was not used due to time constraints and difficulty in aquiring a large training dataset.
 3. Generate correct cloud masks for images in dataset so that algorithm output can be compared and used to improve itself.

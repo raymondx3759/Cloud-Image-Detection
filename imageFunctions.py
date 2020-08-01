@@ -33,7 +33,6 @@ def stitchImages(imList):
 def findKSize(im):
     assert(len(im.shape) == 2)
     brightness = np.mean(im)
-    print ("brightness=", brightness)
     kR, kC = im.shape[0]/segments, im.shape[1]/segments
     sig = getSigmoid(brightness)
     kR, kC = roundPosOdd(kR+sig), roundPosOdd(kC+sig)
@@ -45,10 +44,9 @@ def findKSize(im):
 def getSigmoid(x):
     L, k, h, y = 20, 0.045, 80, -5
     val = (L / (1 + np.exp(-k * (x - h)))) + y
-    print ("val=", val)
     return val
 
-#Finds nearest odd integer > 1 given float. Rounds down with ties
+#Finds nearest odd integer >= 3 given float. Rounds down with ties
 def roundPosOdd(n):
     if (n < 3): return 3
     if (not (n % 2)): return int(n - 1)
@@ -64,15 +62,6 @@ def findNum(im, A=-1, b=0.012, k=maxNum+1):
     num = int(np.rint((A * np.exp(b * brightness)) + k))
     return num    
 
-
-
-
-
-
-
-
-
-
 #Since openCV stores images as BGR, images may need to be converted to be shown correctly
 #Converts given list of images from BGR to RGB 
 def convertBRG2RGB(imList):
@@ -83,11 +72,12 @@ def convertBRG2RGB(imList):
     return imList
 
 #Shows steps of image pipeline in pyplot with figure of provided size
-def plotImages(imList, figX, figY):
+def plotImages(imList, figX, figY, save=True, show=True):
     plt.figure(figsize=(figX,figY))
-    plt.suptitle('Image processing pipeline')
+    plt.suptitle('Image Processing Pipeline')
     for i in range(len(imList)):
         plt.subplot(2,5,i+1).set_title(imStrings[i])
         plt.imshow(imList[i])
 
-    plt.show()  
+    if (save): plt.savefig('pipeline.pdf')
+    if (show): plt.show()  

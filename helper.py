@@ -9,7 +9,6 @@ def findMask(im, winR, winC, num):
     #convert image to 1's and 0's
     im = im.astype(bool).astype(int)
     res = np.zeros((im.shape), dtype=np.uint8)
-    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, ksize=(winR, winC))
     kernel = np.ones((winR, winC))
     np.put(kernel, kernel.size // 2, v=0)
     x = signal.convolve2d(im, kernel, mode='same', fillvalue=255)

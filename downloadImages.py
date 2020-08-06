@@ -15,11 +15,12 @@ def downloadImage(ISSNum, frameNum):
     time.sleep(360)
     driver.find_element_by_link_text("this link").click()
     #Sleep so file can be downloaded
-    time.sleep(15)
+    time.sleep(10)
     print ("Done downloading")
     driver.quit()
     return (ISSNum, frameNum)
 
+#Replace ISSNum and frameNum with respective strings ex. "030", "162833"
 ISSNum, frameNum = None, None
 ISSNum, frameNum = downloadImage(ISSNum, frameNum)
 image = "iss" + ISSNum + "e" + frameNum + ".NEF" 

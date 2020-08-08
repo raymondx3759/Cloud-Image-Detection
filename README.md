@@ -53,10 +53,10 @@ All intermediate images in the algorithm are plotted in a figure which can be sh
 ### Directory:
 - main.py: Script that takes in image paths, runs processing algorithm on them, and plots steps in figure. Can also save figure as PDF.
 - constants.py: Contains global constants used throughout
-- downloadImages.py: Script that automatically downloads and moves images to provided directory from Cities at Night dataset
+- downloadImages.py: Script that automatically downloads all images from dataset (long runtime due to requests taking up to 6 minutes(
 - helper.py: Useful functions used during processing
 - imageFunctions.py: image related helper functions
-- Images: directory that holds current dataset used
+- Images: directory that holds a portion of the current dataset
 
 
 

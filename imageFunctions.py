@@ -40,9 +40,9 @@ def findKSize(im):
 
         
 #Sigmoid function with parameters as listed below. Given an x value, calculates output from curve
-#Parameters chosen such that function endpoints are (0, -5) and (200, 15)
+#Parameters chosen such that function endpoints are (0, -5) and (200, 7)
 def getSigmoid(x):
-    L, k, h, y = 20, 0.045, 80, -5
+    L, k, h, y = 12, 0.045, 80, -5
     val = (L / (1 + np.exp(-k * (x - h)))) + y
     return val
 
